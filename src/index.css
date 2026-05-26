@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+:root {
+  --theme-color: #0da487;
+  --font-primary: #0da487;
+  --font-success: #198754;
+  --font-info: #0dcaf0;
+  --font-danger: #dc3545;
+}
+
+@keyframes not-link {
+  0%, 70% { opacity: 1; }
+  80%, 90% { opacity: 0; }
+}
