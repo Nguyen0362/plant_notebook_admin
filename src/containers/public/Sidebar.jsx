@@ -3,7 +3,7 @@ import logo from "../../assets/full-white.png"
 import useSidebarEffect from '../../utils/sidebarEffect';
 import { Link, useLocation } from "react-router-dom";
 import { path } from "../../utils/constant";
-import { FaHouse, FaStore, FaChevronRight } from "react-icons/fa6";
+import { FaHouse, FaStore, FaChevronRight, FaKey } from "react-icons/fa6";
 
 const Sidebar = () => {
   const sidebarEffectRef = useRef(null);
@@ -33,6 +33,12 @@ const Sidebar = () => {
           path: `${path.ADMIN}/${path.PRODUCT_ADD}`,
         }
       ]
+    },
+    {
+      name: "Gemini Keys",
+      icon: FaKey,
+      path: `${path.ADMIN}/${path.GEMINI_KEY}`,
+      isDropdown: false,
     }
   ];
 

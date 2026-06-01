@@ -3,5 +3,6 @@ export const path = {
   ADMIN: '/admin',
   DASHBOARD: 'dashboard',
   PRODUCT: 'product',
-  PRODUCT_ADD: 'product/add'
+  PRODUCT_ADD: 'product/add',
+  GEMINI_KEY: 'gemini-key'
 }
