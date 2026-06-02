@@ -4,5 +4,8 @@ export const path = {
   DASHBOARD: 'dashboard',
   LIBRARY_PLANTS: 'library-plants',
   LIBRARY_PLANTS_ADD: 'library-plants/add',
-  LIBRARY_PLANTS_EDIT: 'library-plants/edit/:id'
+  LIBRARY_PLANTS_EDIT: 'library-plants/edit/:id',
+  LIBRARY_PLANTS_PENDING: 'library-plants/pending',
+  LIBRARY_PLANTS_HISTORY: 'library-plants/history',
+  CATEGORIES: 'categories'
 }

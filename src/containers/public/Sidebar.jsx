@@ -31,6 +31,18 @@ const Sidebar = () => {
         {
           name: "Thêm cây mới",
           path: `${path.ADMIN}/${path.LIBRARY_PLANTS_ADD}`,
+        },
+        {
+          name: "Yêu cầu duyệt",
+          path: `${path.ADMIN}/${path.LIBRARY_PLANTS_PENDING}`,
+        },
+        {
+          name: "Lịch sử duyệt",
+          path: `${path.ADMIN}/${path.LIBRARY_PLANTS_HISTORY}`,
+        },
+        {
+          name: "Quản lý danh mục",
+          path: `${path.ADMIN}/${path.CATEGORIES}`,
         }
       ]
     }
