@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { 
-  FaKey, 
-  FaPlus, 
   FaTrash, 
   FaPen, 
   FaRotate, 
@@ -25,12 +23,15 @@ import {
   apiPingGeminiKey 
 } from "../../services/geminiKey";
 
+const ITEMS_PER_PAGE = 10;
+
 const GeminiKeys = () => {
   const [keys, setKeys] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pingingId, setPingingId] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [toast, setToast] = useState(null); // { type: 'success' | 'error', message: string }
+  const [currentPage, setCurrentPage] = useState(1);
   
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -243,8 +244,11 @@ const GeminiKeys = () => {
     return null;
   };
 
+  const totalPages = Math.ceil(keys.length / ITEMS_PER_PAGE);
+  const paginatedKeys = keys.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
   return (
-    <div className="max-w-6xl mx-auto pb-12 relative animate-[fadeIn_0.5s_ease-out]">
+    <div className="p-6 max-w-6xl mx-auto pb-12 relative animate-[fadeIn_0.5s_ease-out]">
       {/* Toast Notification */}
       {toast && (
         <div className={`fixed top-5 right-5 z-[9999] flex items-center gap-3 px-5 py-4 rounded-xl shadow-lg border backdrop-blur-md transition-all duration-300 transform translate-y-0 ${
@@ -261,29 +265,13 @@ const GeminiKeys = () => {
       )}
 
       {/* Header section */}
-      <div className="bg-gradient-to-r from-[#0da487] to-[#009289] text-white rounded-2xl p-6 md:p-8 shadow-[0_10px_30px_rgba(13,164,135,0.15)] mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative overflow-hidden">
-        {/* Glow Effects */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-2xl"></div>
-        <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-white/5 rounded-full blur-3xl"></div>
-
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2.5 bg-white/10 rounded-xl">
-              <FaKey className="text-2xl" />
-            </div>
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">Gemini API Keys</h1>
-          </div>
-          <p className="text-white/80 text-sm md:text-base">
-            Quản lý và xoay vòng các API Key dùng cho tính năng quét nhận diện ảnh cây trồng bằng AI.
-          </p>
-        </div>
-
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Quản lý Gemini API Keys</h1>
         <button
           onClick={handleOpenAdd}
-          className="relative z-10 bg-white text-[#0da487] hover:bg-emerald-50 active:scale-95 px-5 py-3 rounded-xl font-bold flex items-center gap-2 shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer text-sm md:text-base"
+          className="bg-[#0da487] hover:bg-[#009289] text-white px-5 py-2.5 rounded-md shadow-md transition-all font-semibold flex items-center gap-2 cursor-pointer text-sm"
         >
-          <FaPlus />
-          Thêm API Key mới
+          + Thêm API Key mới
         </button>
       </div>
 
@@ -340,7 +328,7 @@ const GeminiKeys = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-sm">
-                {keys.map((item) => {
+                {paginatedKeys.map((item) => {
                   const cooldownText = getCooldownInfo(item.cooldownUntil);
                   const isVisible = !!visibleKeys[item.id];
                   const maskKey = (keyStr) => {
@@ -412,7 +400,7 @@ const GeminiKeys = () => {
                         <div className="space-y-1.5">
                           <div className="flex justify-end text-xs font-medium text-gray-500 gap-1">
                             <span className="font-bold text-gray-700">{item.usedToday}</span>
-                            <span>/ {item.dailyRequestLimit} ({percentage}%)</span>
+                            <span>/ {item.dailyRequestLimit}{percentage > 0 ? ` (${percentage}%)` : ''}</span>
                           </div>
                           <div className="w-full bg-gray-100 rounded-full h-2">
                             <div 
@@ -481,6 +469,29 @@ const GeminiKeys = () => {
           </div>
         )}
       </div>
+
+      {/* Pagination */}
+      {!loading && totalPages > 1 && (
+        <div className="flex justify-center items-center mt-6 gap-2">
+          <button
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(p => p - 1)}
+            className="px-4 py-2 border border-gray-200 rounded-md font-medium text-gray-600 hover:bg-[#0da487]/10 hover:text-[#0da487] hover:border-[#0da487] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-600 disabled:hover:border-gray-200 transition-colors cursor-pointer"
+          >
+            Trang trước
+          </button>
+          <span className="px-4 py-2 font-semibold text-[#0da487]">
+            Trang {currentPage} / {totalPages}
+          </span>
+          <button
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(p => p + 1)}
+            className="px-4 py-2 border border-gray-200 rounded-md font-medium text-gray-600 hover:bg-[#0da487]/10 hover:text-[#0da487] hover:border-[#0da487] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-600 disabled:hover:border-gray-200 transition-colors cursor-pointer"
+          >
+            Trang sau
+          </button>
+        </div>
+      )}
 
       {/* Modal Add/Edit */}
       {isModalOpen && (
