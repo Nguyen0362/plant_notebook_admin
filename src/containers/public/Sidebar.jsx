@@ -3,7 +3,7 @@ import logo from "../../assets/full-white.png"
 import useSidebarEffect from '../../utils/sidebarEffect';
 import { Link, useLocation } from "react-router-dom";
 import { path } from "../../utils/constant";
-import { FaHouse, FaStore, FaChevronRight } from "react-icons/fa6";
+import { FaHouse, FaStore, FaChevronRight, FaLeaf } from "react-icons/fa6";
 
 const Sidebar = () => {
   const sidebarEffectRef = useRef(null);
@@ -20,17 +20,17 @@ const Sidebar = () => {
       isDropdown: false,
     },
     {
-      name: "Product",
-      icon: FaStore,
+      name: "Thư viện cây",
+      icon: FaLeaf,
       isDropdown: true,
       subItems: [
         {
-          name: "Prodcts",
-          path: `${path.ADMIN}/${path.PRODUCT}`,
+          name: "Danh sách cây",
+          path: `${path.ADMIN}/${path.LIBRARY_PLANTS}`,
         },
         {
-          name: "Add New Products",
-          path: `${path.ADMIN}/${path.PRODUCT_ADD}`,
+          name: "Thêm cây mới",
+          path: `${path.ADMIN}/${path.LIBRARY_PLANTS_ADD}`,
         }
       ]
     }
