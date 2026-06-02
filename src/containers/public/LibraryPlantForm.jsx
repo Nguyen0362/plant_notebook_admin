@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { apiGetPlantById, apiCreatePlant, apiUpdatePlant } from '../../services/libraryPlantService';
 import { path } from '../../utils/constant';
+import Swal from 'sweetalert2';
 
 const LibraryPlantForm = () => {
   const { id } = useParams();
@@ -64,13 +65,57 @@ const LibraryPlantForm = () => {
         
         setPreviewImage(p.imageUrl || p.image || null);
         
-        if (p.careGuide && p.careGuide.length > 0) setCareGuide(p.careGuide);
-        if (p.funFacts && p.funFacts.length > 0) setFunFacts(p.funFacts);
-        if (p.growthTimeline && p.growthTimeline.length > 0) setGrowthTimeline(p.growthTimeline);
+        if (p.careGuide && p.careGuide.length > 0) {
+          const formattedCare = p.careGuide.map(item => {
+            if (typeof item === 'string') return item;
+            if (item && typeof item === 'object') {
+              if (item.title && item.content) return `${item.title}: ${item.content}`;
+              if (item.content) return item.content;
+              if (item.text) return item.text;
+              if (item.title) return item.title;
+              return JSON.stringify(item);
+            }
+            return '';
+          }).filter(Boolean);
+          setCareGuide(formattedCare.length > 0 ? formattedCare : ['']);
+        } else {
+          setCareGuide(['']);
+        }
+        
+        if (p.funFacts && p.funFacts.length > 0) {
+          const formattedFun = p.funFacts.map(item => (typeof item === 'string' ? item : JSON.stringify(item))).filter(Boolean);
+          setFunFacts(formattedFun.length > 0 ? formattedFun : ['']);
+        } else {
+          setFunFacts(['']);
+        }
+        
+        if (p.growthTimeline && p.growthTimeline.length > 0) {
+          const formattedGrowth = p.growthTimeline.map(item => {
+            if (item && typeof item === 'object') {
+              return {
+                monthLabel: item.monthLabel || item.stage || item.duration || '',
+                note: item.note || ''
+              };
+            }
+            if (typeof item === 'string') {
+              return { monthLabel: '', note: item };
+            }
+            return { monthLabel: '', note: '' };
+          });
+          setGrowthTimeline(formattedGrowth);
+        } else {
+          setGrowthTimeline([{ monthLabel: '', note: '' }]);
+        }
       }
     } catch (error) {
       console.error(error);
-      alert('Không thể tải thông tin cây!');
+      Swal.fire({
+        title: 'Lỗi!',
+        text: 'Không thể tải thông tin cây trồng!',
+        icon: 'error',
+        confirmButtonColor: '#0da487',
+        customClass: { popup: 'rounded-[1rem]' }
+      });
     }
   };
 
@@ -115,8 +160,6 @@ const LibraryPlantForm = () => {
 
     try {
       const submitData = new FormData();
-      // Required for create if missing id is handled in backend (Wait, we should send an id if creating, or backend auto-generates. The backend says: if (!id) error. Let's send a fake ID for now or fix backend to use UUIDV4). 
-      // Actually backend model uses UUIDV4 as default for `LibraryPlant.id` but controller checks `!req.body.id`.
       if (!isEdit) {
         submitData.append('id', crypto.randomUUID());
       }
@@ -135,40 +178,61 @@ const LibraryPlantForm = () => {
 
       if (isEdit) {
         await apiUpdatePlant(id, submitData);
-        alert('Cập nhật thành công!');
+        Swal.fire({
+          title: 'Thành công!',
+          text: 'Đã cập nhật thông tin cây thành công.',
+          icon: 'success',
+          confirmButtonColor: '#0da487',
+          customClass: { popup: 'rounded-[1rem]' }
+        }).then(() => {
+          navigate(`/admin/${path.LIBRARY_PLANTS}`);
+        });
       } else {
         await apiCreatePlant(submitData);
-        alert('Thêm mới thành công!');
+        Swal.fire({
+          title: 'Thành công!',
+          text: 'Đã tạo mới cây trồng thành công.',
+          icon: 'success',
+          confirmButtonColor: '#0da487',
+          customClass: { popup: 'rounded-[1rem]' }
+        }).then(() => {
+          navigate(`/admin/${path.LIBRARY_PLANTS}`);
+        });
       }
-      navigate(`/admin/${path.LIBRARY_PLANTS}`);
     } catch (error) {
       console.error(error);
       const errorMsg = error.response?.data?.message || error.message || 'Có lỗi xảy ra!';
-      alert('Lỗi: ' + errorMsg);
+      Swal.fire({
+        title: 'Lỗi!',
+        text: 'Thao tác thất bại: ' + errorMsg,
+        icon: 'error',
+        confirmButtonColor: '#0da487',
+        customClass: { popup: 'rounded-[1rem]' }
+      });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="p-8 max-w-4xl mx-auto bg-white rounded-xl shadow-lg border border-gray-100 mt-8 mb-16">
-      <h1 className="text-3xl font-extrabold mb-8 text-gray-800 border-b pb-4">
+    <div className="p-8 max-w-4xl mx-auto bg-white rounded-2xl shadow-lg border border-gray-100 mt-8 mb-16 relative animate-[fadeIn_0.5s_ease-out]">
+      <h1 className="text-2xl md:text-3xl font-bold mb-8 text-gray-800 border-b pb-4">
         {isEdit ? 'Chỉnh sửa Cây' : 'Thêm Cây Mới'}
       </h1>
       
       <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">Tên cây <span className="text-red-500">*</span></label>
-            <input required type="text" name="name" value={formData.name} onChange={handleChange} className="w-full border border-gray-300 p-2.5 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0da487]/30 focus:border-[#0da487] transition-all" />
+            <input required type="text" name="name" value={formData.name} onChange={handleChange} className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0da487]/20 focus:border-[#0da487] transition-all font-medium" />
           </div>
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">Tên khoa học</label>
-            <input type="text" name="scientificName" value={formData.scientificName} onChange={handleChange} className="w-full border border-gray-300 p-2.5 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0da487]/30 focus:border-[#0da487] transition-all" />
+            <input type="text" name="scientificName" value={formData.scientificName} onChange={handleChange} className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0da487]/20 focus:border-[#0da487] transition-all font-medium italic" />
           </div>
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">Danh mục <span className="text-red-500">*</span></label>
-            <select name="category" value={formData.category} onChange={handleChange} className="w-full border border-gray-300 p-2.5 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0da487]/30 focus:border-[#0da487] transition-all bg-white">
+            <select name="category" value={formData.category} onChange={handleChange} className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0da487]/20 focus:border-[#0da487] transition-all bg-white font-medium text-gray-700">
               <option value="Trong nhà">Trong nhà</option>
               <option value="Ngoài trời">Ngoài trời</option>
               <option value="Ban công">Ban công</option>
@@ -177,112 +241,118 @@ const LibraryPlantForm = () => {
           </div>
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">Mức độ ánh sáng <span className="text-red-500">*</span></label>
-            <input required type="text" name="lightLevel" value={formData.lightLevel} onChange={handleChange} className="w-full border border-gray-300 p-2.5 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0da487]/30 focus:border-[#0da487] transition-all" />
+            <input required type="text" name="lightLevel" value={formData.lightLevel} onChange={handleChange} className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0da487]/20 focus:border-[#0da487] transition-all font-medium" />
           </div>
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">Nhu cầu nước <span className="text-red-500">*</span></label>
-            <input required type="text" name="waterNeed" value={formData.waterNeed} onChange={handleChange} className="w-full border border-gray-300 p-2.5 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0da487]/30 focus:border-[#0da487] transition-all" />
+            <input required type="text" name="waterNeed" value={formData.waterNeed} onChange={handleChange} className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0da487]/20 focus:border-[#0da487] transition-all font-medium" />
           </div>
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">Độ khó chăm sóc <span className="text-red-500">*</span></label>
-            <input required type="text" name="difficulty" value={formData.difficulty} onChange={handleChange} className="w-full border border-gray-300 p-2.5 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0da487]/30 focus:border-[#0da487] transition-all" />
+            <input required type="text" name="difficulty" value={formData.difficulty} onChange={handleChange} className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0da487]/20 focus:border-[#0da487] transition-all font-medium" />
           </div>
         </div>
 
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-2">Mô tả ngắn gọn <span className="text-red-500">*</span></label>
-          <textarea required name="shortDescription" value={formData.shortDescription} onChange={handleChange} className="w-full border border-gray-300 p-2.5 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0da487]/30 focus:border-[#0da487] transition-all h-24" />
+          <textarea required name="shortDescription" value={formData.shortDescription} onChange={handleChange} className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0da487]/20 focus:border-[#0da487] transition-all font-medium h-24" />
         </div>
         
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-2">Mô tả chi tiết <span className="text-red-500">*</span></label>
-          <textarea required name="description" value={formData.description} onChange={handleChange} className="w-full border border-gray-300 p-2.5 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0da487]/30 focus:border-[#0da487] transition-all h-40" />
+          <textarea required name="description" value={formData.description} onChange={handleChange} className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0da487]/20 focus:border-[#0da487] transition-all font-medium h-40" />
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">Nhiệt độ</label>
-            <input type="text" name="temperature" value={formData.temperature} onChange={handleChange} className="w-full border border-gray-300 p-2.5 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0da487]/30 focus:border-[#0da487] transition-all" />
+            <label className="block text-sm font-bold text-gray-700 mb-2">Nhiệt độ thích hợp</label>
+            <input type="text" name="temperature" value={formData.temperature} onChange={handleChange} className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0da487]/20 focus:border-[#0da487] transition-all font-medium" />
           </div>
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">Độ ẩm</label>
-            <input type="text" name="humidity" value={formData.humidity} onChange={handleChange} className="w-full border border-gray-300 p-2.5 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0da487]/30 focus:border-[#0da487] transition-all" />
+            <input type="text" name="humidity" value={formData.humidity} onChange={handleChange} className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0da487]/20 focus:border-[#0da487] transition-all font-medium" />
           </div>
           <div>
             <label className="block text-sm font-bold text-gray-700 mb-2">Độc tính</label>
-            <input type="text" name="toxicity" value={formData.toxicity} onChange={handleChange} className="w-full border border-gray-300 p-2.5 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0da487]/30 focus:border-[#0da487] transition-all" />
+            <input type="text" name="toxicity" value={formData.toxicity} onChange={handleChange} className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0da487]/20 focus:border-[#0da487] transition-all font-medium" />
           </div>
           <div>
-            <label className="block text-sm font-bold text-gray-700 mb-2">Badge (Nhãn)</label>
-            <input type="text" name="badge" value={formData.badge} onChange={handleChange} className="w-full border border-gray-300 p-2.5 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0da487]/30 focus:border-[#0da487] transition-all" />
+            <label className="block text-sm font-bold text-gray-700 mb-2">Badge (Nhãn phụ)</label>
+            <input type="text" name="badge" value={formData.badge} onChange={handleChange} className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0da487]/20 focus:border-[#0da487] transition-all font-medium" />
           </div>
         </div>
 
-        <div className="flex gap-8 p-4 bg-gray-50 rounded-md border border-gray-100">
+        <div className="flex flex-col sm:flex-row gap-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
           <label className="flex items-center gap-3 cursor-pointer">
-            <input type="checkbox" name="isTrending" checked={formData.isTrending} onChange={handleChange} className="w-5 h-5 text-[#0da487] rounded focus:ring-[#0da487]" />
+            <input type="checkbox" name="isTrending" checked={formData.isTrending} onChange={handleChange} className="w-5 h-5 text-[#0da487] rounded focus:ring-[#0da487]/30 border-gray-300" />
             <span className="text-sm font-bold text-gray-700">Đang thịnh hành (Trending)</span>
           </label>
           <label className="flex items-center gap-3 cursor-pointer">
-            <input type="checkbox" name="isRare" checked={formData.isRare} onChange={handleChange} className="w-5 h-5 text-[#0da487] rounded focus:ring-[#0da487]" />
-            <span className="text-sm font-bold text-gray-700">Cây hiếm (Rare)</span>
+            <input type="checkbox" name="isRare" checked={formData.isRare} onChange={handleChange} className="w-5 h-5 text-[#0da487] rounded focus:ring-[#0da487]/30 border-gray-300" />
+            <span className="text-sm font-bold text-gray-700">Cây quý hiếm (Rare)</span>
           </label>
         </div>
 
-        <hr className="border-gray-200" />
+        <hr className="border-gray-100" />
         
         {/* Dynamic Arrays */}
-        <div className="bg-gray-50 p-6 rounded-md border border-gray-100">
-          <label className="block text-sm font-bold text-gray-800 mb-4">Hướng dẫn chăm sóc (Mỗi bước 1 dòng)</label>
+        <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
+          <label className="block text-sm font-bold text-gray-800 mb-4">Hướng dẫn chăm sóc (Mỗi bước một dòng)</label>
           {careGuide.map((item, index) => (
             <div key={index} className="flex gap-3 mb-3">
-              <input type="text" value={item} onChange={(e) => updateArrayField(setCareGuide, index, e.target.value)} className="w-full border border-gray-300 p-2.5 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0da487]/30 focus:border-[#0da487] transition-all" />
-              <button type="button" onClick={() => removeArrayField(setCareGuide, index)} className="px-4 bg-red-50 text-red-600 hover:bg-red-100 rounded-md font-semibold transition-colors">Xóa</button>
+              <input type="text" placeholder={`Bước ${index + 1}`} value={item} onChange={(e) => updateArrayField(setCareGuide, index, e.target.value)} className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0da487]/20 focus:border-[#0da487] transition-all font-medium bg-white" />
+              <button type="button" onClick={() => removeArrayField(setCareGuide, index)} className="px-4 py-2 bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-500 hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer">Xóa</button>
             </div>
           ))}
-          <button type="button" onClick={() => addArrayField(setCareGuide, '')} className="text-[#0da487] font-semibold text-sm mt-2 hover:underline">+ Thêm bước</button>
+          <button type="button" onClick={() => addArrayField(setCareGuide, '')} className="flex items-center gap-1.5 mt-3 px-4 py-2.5 border border-dashed border-gray-300 text-gray-500 hover:border-[#0da487] hover:text-[#0da487] rounded-xl text-xs font-bold transition-all cursor-pointer bg-white">
+            + Thêm bước hướng dẫn
+          </button>
         </div>
 
-        <div className="bg-gray-50 p-6 rounded-md border border-gray-100">
+        <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
           <label className="block text-sm font-bold text-gray-800 mb-4">Sự thật thú vị (Fun Facts)</label>
           {funFacts.map((item, index) => (
             <div key={index} className="flex gap-3 mb-3">
-              <input type="text" value={item} onChange={(e) => updateArrayField(setFunFacts, index, e.target.value)} className="w-full border border-gray-300 p-2.5 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0da487]/30 focus:border-[#0da487] transition-all" />
-              <button type="button" onClick={() => removeArrayField(setFunFacts, index)} className="px-4 bg-red-50 text-red-600 hover:bg-red-100 rounded-md font-semibold transition-colors">Xóa</button>
+              <input type="text" placeholder={`Sự thật thú vị #${index + 1}`} value={item} onChange={(e) => updateArrayField(setFunFacts, index, e.target.value)} className="w-full border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0da487]/20 focus:border-[#0da487] transition-all font-medium bg-white" />
+              <button type="button" onClick={() => removeArrayField(setFunFacts, index)} className="px-4 py-2 bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-500 hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer">Xóa</button>
             </div>
           ))}
-          <button type="button" onClick={() => addArrayField(setFunFacts, '')} className="text-[#0da487] font-semibold text-sm mt-2 hover:underline">+ Thêm Fun Fact</button>
+          <button type="button" onClick={() => addArrayField(setFunFacts, '')} className="flex items-center gap-1.5 mt-3 px-4 py-2.5 border border-dashed border-gray-300 text-gray-500 hover:border-[#0da487] hover:text-[#0da487] rounded-xl text-xs font-bold transition-all cursor-pointer bg-white">
+            + Thêm sự thật thú vị
+          </button>
         </div>
 
-        <div className="bg-gray-50 p-6 rounded-md border border-gray-100">
+        <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100">
           <label className="block text-sm font-bold text-gray-800 mb-4">Quá trình phát triển</label>
           {growthTimeline.map((item, index) => (
             <div key={index} className="flex gap-3 mb-3">
-              <input type="text" placeholder="Giai đoạn (vd: Tháng 1)" value={item.monthLabel} onChange={(e) => updateGrowthTimeline(index, 'monthLabel', e.target.value)} className="w-1/3 border border-gray-300 p-2.5 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0da487]/30 focus:border-[#0da487] transition-all" />
-              <input type="text" placeholder="Ghi chú" value={item.note} onChange={(e) => updateGrowthTimeline(index, 'note', e.target.value)} className="w-2/3 border border-gray-300 p-2.5 rounded-md focus:outline-none focus:ring-2 focus:ring-[#0da487]/30 focus:border-[#0da487] transition-all" />
-              <button type="button" onClick={() => removeArrayField(setGrowthTimeline, index)} className="px-4 bg-red-50 text-red-600 hover:bg-red-100 rounded-md font-semibold transition-colors">Xóa</button>
+              <input type="text" placeholder="Giai đoạn (vd: Tháng 1)" value={item.monthLabel} onChange={(e) => updateGrowthTimeline(index, 'monthLabel', e.target.value)} className="w-1/3 border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0da487]/20 focus:border-[#0da487] transition-all font-medium bg-white" />
+              <input type="text" placeholder="Ghi chú mô tả sự phát triển..." value={item.note} onChange={(e) => updateGrowthTimeline(index, 'note', e.target.value)} className="w-2/3 border border-gray-200 px-4 py-2.5 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0da487]/20 focus:border-[#0da487] transition-all font-medium bg-white" />
+              <button type="button" onClick={() => removeArrayField(setGrowthTimeline, index)} className="px-4 py-2 bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-500 hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer">Xóa</button>
             </div>
           ))}
-          <button type="button" onClick={() => addArrayField(setGrowthTimeline, { monthLabel: '', note: '' })} className="text-[#0da487] font-semibold text-sm mt-2 hover:underline">+ Thêm giai đoạn</button>
+          <button type="button" onClick={() => addArrayField(setGrowthTimeline, { monthLabel: '', note: '' })} className="flex items-center gap-1.5 mt-3 px-4 py-2.5 border border-dashed border-gray-300 text-gray-500 hover:border-[#0da487] hover:text-[#0da487] rounded-xl text-xs font-bold transition-all cursor-pointer bg-white">
+            + Thêm giai đoạn phát triển
+          </button>
         </div>
 
-        <hr className="border-gray-200" />
+        <hr className="border-gray-100" />
 
         <div>
-          <label className="block text-sm font-bold text-gray-700 mb-3">Hình ảnh {!isEdit && <span className="text-red-500">*</span>}</label>
-          <input required={!isEdit} type="file" accept="image/*" onChange={handleImageChange} className="mb-4 block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#0da487]/10 file:text-[#0da487] hover:file:bg-[#0da487]/20 transition-all cursor-pointer" />
+          <label className="block text-sm font-bold text-gray-700 mb-3">Hình ảnh cây trồng {!isEdit && <span className="text-red-500">*</span>}</label>
+          <input required={!isEdit} type="file" accept="image/*" onChange={handleImageChange} className="mb-4 block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#0da487]/10 file:text-[#0da487] hover:file:bg-[#0da487]/20 transition-all cursor-pointer" />
           {previewImage && (
-            <div className="mt-4 inline-block p-2 border border-gray-200 rounded-lg">
-              <img src={previewImage} alt="Preview" className="h-56 object-cover rounded-md shadow-sm" />
+            <div className="mt-4 inline-block p-2 border border-gray-100 rounded-2xl bg-gray-50">
+              <img src={previewImage} alt="Preview" className="h-56 object-cover rounded-xl shadow-sm" />
             </div>
           )}
         </div>
 
-        <div className="flex gap-4 pt-6 border-t border-gray-200 mt-8">
-          <button type="button" onClick={() => navigate(`/admin/${path.LIBRARY_PLANTS}`)} className="px-8 py-3 bg-white border border-gray-300 text-gray-700 font-bold rounded-md shadow-sm hover:bg-gray-50 transition-colors">
+        <div className="flex gap-4 pt-6 border-t border-gray-150 mt-8">
+          <button type="button" onClick={() => navigate(`/admin/${path.LIBRARY_PLANTS}`)} className="px-6 py-3 bg-white border border-gray-200 text-gray-700 font-bold rounded-xl shadow-sm hover:bg-gray-50 active:scale-95 transition-all cursor-pointer text-sm">
             Hủy
           </button>
-          <button type="submit" disabled={loading} className="px-8 py-3 bg-[#0da487] text-white font-bold rounded-md shadow-md hover:bg-[#009289] disabled:opacity-50 transition-colors flex items-center justify-center min-w-[140px]">
+          <button type="submit" disabled={loading} className="px-6 py-3 bg-[#0da487] text-white font-bold rounded-xl shadow-md hover:bg-[#009289] active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center min-w-[140px] cursor-pointer text-sm">
             {loading ? (
               <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
