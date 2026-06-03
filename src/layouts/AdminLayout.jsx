@@ -37,6 +37,14 @@ const AdminLayout = () => {
     navigate('/login');
   };
 
+  const hasPermission = (required) => {
+    const roleName = user?.Role?.name;
+    if (roleName === 'Super Admin' || roleName === 'Admin') return true;
+    
+    const permissions = user?.Role?.permissions || [];
+    return permissions.some(p => `${p.resource}:${p.action}` === required);
+  };
+
   // Menu items cho Sidebar
   const sidebarMenuItems = [
     {
@@ -44,22 +52,22 @@ const AdminLayout = () => {
       icon: <DashboardOutlined />,
       label: 'Dashboard',
     },
-    {
+    hasPermission('users:read') && {
       key: `${path.ADMIN}/${path.USERS}`,
       icon: <UserOutlined />,
       label: 'Quản lý User',
     },
-    {
+    hasPermission('roles:read') && {
       key: `${path.ADMIN}/${path.ROLES}`,
       icon: <SafetyCertificateOutlined />,
       label: 'Phân quyền',
     },
-    {
+    hasPermission('logs:read') && {
       key: `${path.ADMIN}/${path.LOGS}`,
       icon: <FileTextOutlined />,
       label: 'Logs',
     },
-  ];
+  ].filter(Boolean);
 
   // Dropdown items cho avatar
   const dropdownItems = {
@@ -82,6 +90,8 @@ const AdminLayout = () => {
     onClick: ({ key }) => {
       if (key === 'logout') {
         handleLogout();
+      } else if (key === 'profile') {
+        navigate(`${path.ADMIN}/${path.PROFILE}`);
       }
     },
   };
@@ -250,7 +260,7 @@ const AdminLayout = () => {
                 />
                 <div style={{ lineHeight: 1.3 }}>
                   <Text strong style={{ fontSize: 14, display: 'block' }}>
-                    {user?.name || 'Admin'}
+                    {user?.fullName || 'Admin'}
                   </Text>
                   <Text
                     type="secondary"

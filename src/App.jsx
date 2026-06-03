@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard';
 import Users from './pages/Users';
 import Roles from './pages/Roles';
 import Logs from './pages/Logs';
+import Profile from './pages/Profile';
 
 // Components
 import ProtectedRoute from './components/ProtectedRoute';
@@ -62,6 +63,7 @@ function App() {
           <Route path={path.USERS} element={<Users />} />
           <Route path={path.ROLES} element={<Roles />} />
           <Route path={path.LOGS} element={<Logs />} />
+          <Route path={path.PROFILE} element={<Profile />} />
         </Route>
 
         {/* Redirect mặc định về /admin */}
