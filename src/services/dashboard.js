@@ -1,13 +1,12 @@
 import axiosInstance from '../utils/axios';
 
-export const apiLogin = async (payload) => {
+export const apiGetDashboard = async () => {
   try {
     const response = await axiosInstance({
-      method: 'post',
-      url: '/admin/auth/login',
-      data: payload,
+      method: 'get',
+      url: '/admin/dashboard',
     });
-    return response;
+    return response.data;
   } catch (error) {
     throw error;
   }
