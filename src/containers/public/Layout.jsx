@@ -1,9 +1,16 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Header from "./Header"
 import Sidebar from "./Sidebar"
 import Footer from "./Footer";
 
 const Layout = () => {
+  const { isLoggedIn } = useSelector(state => state.auth);
+
+  if (!isLoggedIn) {
+    return <Navigate to="/login" replace={true} />;
+  }
+
   return (
     <div>
       <Header />

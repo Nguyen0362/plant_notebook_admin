@@ -1,15 +1,14 @@
-import axiosConfig from "../axiosConfig"
+import axiosInstance from '../utils/axios';
 
 export const apiLogin = async (payload) => {
   try {
-    const response = await axiosConfig({
-      method: "post",
-      url: "/admin/auth/login",
-      data: payload
-    })
-
-    return response
+    const response = await axiosInstance({
+      method: 'post',
+      url: '/admin/auth/login',
+      data: payload,
+    });
+    return response;
   } catch (error) {
-    console.log(error.response.data)
+    throw error;
   }
-}
+};
