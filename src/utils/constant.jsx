@@ -7,5 +7,11 @@ export const path = {
   LIBRARY_PLANTS_EDIT: 'library-plants/edit/:id',
   LIBRARY_PLANTS_PENDING: 'library-plants/pending',
   LIBRARY_PLANTS_HISTORY: 'library-plants/history',
-  CATEGORIES: 'categories'
-}
+  CATEGORIES: 'categories',
+  USERS: 'users',
+  ROLES: 'roles',
+  LOGS: 'logs',
+  PROFILE: 'profile',
+  PRODUCT: 'product',
+  PRODUCT_ADD: 'product/add',
+};
