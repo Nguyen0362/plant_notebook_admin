@@ -21,7 +21,7 @@ import {
   apiUpdateGeminiKey, 
   apiDeleteGeminiKey, 
   apiPingGeminiKey 
-} from "../../services/geminiKey";
+} from "../services/geminiKey";
 
 const ITEMS_PER_PAGE = 10;
 

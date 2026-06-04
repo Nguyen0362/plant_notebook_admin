@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { apiGetPlants, apiApprovePlant, apiRejectPlant, apiDeletePlant } from '../../services/libraryPlantService';
+import { apiGetPlants, apiApprovePlant, apiRejectPlant, apiDeletePlant } from '../services/libraryPlantService';
 import { Link } from 'react-router-dom';
-import { path } from '../../utils/constant';
+import { path } from '../utils/constant';
 import { FaEdit, FaTrash, FaCheck, FaTimes, FaUndo } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 
@@ -304,9 +304,20 @@ const LibraryPlantList = ({ mode = 'approved' }) => {
                     <tr key={plant.id} className="hover:bg-gray-50/50 transition-colors">
                       <td className="p-4 text-center">
                         {plant.imageUrl || plant.image ? (
-                          <img src={plant.imageUrl || plant.image} alt={plant.name} className="w-14 h-14 object-cover rounded shadow-sm border border-gray-150 mx-auto" />
+                          <div className="w-16 h-16 rounded-xl overflow-hidden shadow-md border border-gray-100 mx-auto group/img relative">
+                            <img 
+                              src={plant.imageUrl || plant.image} 
+                              alt={plant.name} 
+                              className="w-full h-full object-cover transition-transform duration-300 group-hover/img:scale-110" 
+                            />
+                          </div>
                         ) : (
-                          <div className="w-14 h-14 bg-gray-100 border border-gray-200 rounded flex items-center justify-center text-gray-400 text-xs font-semibold mx-auto">No Image</div>
+                          <div className="w-16 h-16 bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-100 rounded-xl flex flex-col items-center justify-center text-emerald-400 mx-auto shadow-sm">
+                            <svg className="w-6 h-6 mb-0.5 opacity-60" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" />
+                            </svg>
+                            <span className="text-[0.55rem] font-bold opacity-70">No Image</span>
+                          </div>
                         )}
                       </td>
                       <td className="p-4">

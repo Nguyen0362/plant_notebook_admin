@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import icons from "../../utils/icons";
+import icons from "../utils/icons";
 import { useDispatch, useSelector } from "react-redux";
-import * as actions from "../../stores/actions";
+import * as actions from "../stores/actions";
 
 const { MdEmail, MdLock, MdVisibility, MdVisibilityOff } = icons;
 
