@@ -1,6 +1,8 @@
 export { default as Layout } from "./Layout"
 export { default as Dashboard } from "./Dashboard"
 export { default as Login } from "./Login"
+export { default as AddProduct } from "./AddProduct"
+export { default as GeminiKeys } from "./GeminiKeys"
 export { default as LibraryPlantList } from "./LibraryPlantList"
 export { default as LibraryPlantForm } from "./LibraryPlantForm"
 export { default as CategoryList } from "./CategoryList"

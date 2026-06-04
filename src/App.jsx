@@ -13,15 +13,21 @@ import Roles from './pages/Roles';
 import Logs from './pages/Logs';
 import Profile from './pages/Profile';
 
-// Components của phần Quản lý cây trồng (Bốc từ nhánh cũ qua)
-import { LibraryPlantList, LibraryPlantForm, CategoryList } from "./containers/public";
+// Components của phần Quản lý cây trồng và API Key (Bốc từ nhánh tính năng qua)
+import { 
+  LibraryPlantList, 
+  LibraryPlantForm, 
+  CategoryList,
+  Product, 
+  AddProduct, 
+  GeminiKeys 
+} from "./containers/public";
 
 // Components
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Route path constants
 import { path } from './utils/constant';
-
 function App() {
   return (
     <ConfigProvider
@@ -63,21 +69,24 @@ function App() {
         >
           <Route index element={<Navigate to={path.DASHBOARD} replace />} />
           <Route path={path.DASHBOARD} element={<Dashboard />} />
-    <Route path={path.LIBRARY_PLANTS} element={<LibraryPlantList mode="approved" />} />
-    <Route path={path.LIBRARY_PLANTS_PENDING} element={<LibraryPlantList mode="pending" />} />
-    <Route path={path.LIBRARY_PLANTS_HISTORY} element={<LibraryPlantList mode="history" />} />
-    <Route path={path.LIBRARY_PLANTS_ADD} element={<LibraryPlantForm />} />
-    <Route path={path.LIBRARY_PLANTS_EDIT} element={<LibraryPlantForm />} />
-    <Route path={path.CATEGORIES} element={<CategoryList />} />
-    <Route path={path.USERS} element={<Users />} />
-    <Route path={path.ROLES} element={<Roles />} />
-    <Route path={path.LOGS} element={<Logs />} />
-    <Route path={path.PROFILE} element={<Profile />} />
-    </Route>
+<Route path={path.PRODUCT} element={<Product />} />
+          <Route path={path.PRODUCT_ADD} element={<AddProduct />} />
+          <Route path={path.GEMINI_KEY} element={<GeminiKeys />} />
+          <Route path={path.LIBRARY_PLANTS} element={<LibraryPlantList mode="approved" />} />
+          <Route path={path.LIBRARY_PLANTS_PENDING} element={<LibraryPlantList mode="pending" />} />
+          <Route path={path.LIBRARY_PLANTS_HISTORY} element={<LibraryPlantList mode="history" />} />
+          <Route path={path.LIBRARY_PLANTS_ADD} element={<LibraryPlantForm />} />
+          <Route path={path.LIBRARY_PLANTS_EDIT} element={<LibraryPlantForm />} />
+          <Route path={path.CATEGORIES} element={<CategoryList />} />
+          <Route path={path.USERS} element={<Users />} />
+          <Route path={path.ROLES} element={<Roles />} />
+          <Route path={path.LOGS} element={<Logs />} />
+          <Route path={path.PROFILE} element={<Profile />} />
+        </Route>
 
-    {/* Redirect mặc định về /admin */}
-    <Route path="/" element={<Navigate to="/admin" replace />} />
-    <Route path="*" element={<Navigate to="/admin" replace />} /> 
+        {/* Redirect mặc định về /admin */}
+        <Route path="/" element={<Navigate to="/admin" replace />} />
+        <Route path="*" element={<Navigate to="/admin" replace />} />
       </Routes>
     </ConfigProvider>
   );

@@ -14,4 +14,5 @@ export const path = {
   PROFILE: 'profile',
   PRODUCT: 'product',
   PRODUCT_ADD: 'product/add',
+  GEMINI_KEY: 'gemini-key'
 };
