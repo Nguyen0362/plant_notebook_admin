@@ -12,7 +12,5 @@ export const path = {
   ROLES: 'roles',
   LOGS: 'logs',
   PROFILE: 'profile',
-  PRODUCT: 'product',
-  PRODUCT_ADD: 'product/add',
   GEMINI_KEY: 'gemini-key'
 };
