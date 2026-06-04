@@ -5,11 +5,21 @@ const instance = axios.create({
 })
 
 instance.interceptors.request.use(function (config) {
-  const token = localStorage.getItem('persist:auth')
-  console.log(token)
+  const persistAuth = localStorage.getItem('persist:auth')
+  if (persistAuth) {
+    try {
+      const authData = JSON.parse(persistAuth)
+      // redux-persist stringifies stored nested state, so we parse it again
+      const token = authData.token ? JSON.parse(authData.token) : null
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`
+      }
+    } catch (e) {
+      console.error("Failed to parse persist:auth token", e)
+    }
+  }
   return config
 }, function (error) {
-  console.log(error)
   return Promise.reject(error)
 })
 

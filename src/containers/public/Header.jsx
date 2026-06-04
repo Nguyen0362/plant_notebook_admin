@@ -1,8 +1,13 @@
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { logout } from "../../stores/actions";
 import icons from "../../utils/icons";
 
 const { IoSearch, FaRegBell } = icons
 
 const Header = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   return (
     <header className="header fixed top-0 right-0 z-50 max-w-full bg-white ml-[17.5rem] w-[calc(100%-17.5rem)] transition-all duration-500 ease-in-out [&.close]:ml-[5.3125rem] [&.close]:w-[calc(100%-5.3125rem)]">
       <div className="flex justify-between items-center px-[1.875rem] py-[1.375rem] relative">
@@ -35,7 +40,7 @@ const Header = () => {
               </div>
 
               {/* <!-- Notification Dropdown --> */}
-              <ul className="absolute top-[3.125rem] -right-[1.25rem] w-[18.75rem] bg-white text-[1rem] rounded-[0.3125rem] overflow-hidden shadow-[0_0_1.25rem_rgba(89,102,122,0.1)] translate-y-[1.875rem] opacity-0 invisible transition-all duration-300 ease-linear group-hover/msg:translate-y-0 group-hover/msg:opacity-1 group-hover/msg:visible z-50">
+              <ul className="absolute top-[3.125rem] -right-[1.25rem] w-[18.75rem] bg-white text-[1rem] rounded-[0.3125rem] overflow-hidden shadow-[0_0_1.25rem_rgba(89,102,122,0.1)] translate-y-[1.875rem] opacity-0 invisible transition-all duration-300 ease-linear group-hover/msg:translate-y-0 group-hover/msg:opacity-100 group-hover/msg:visible z-50">
                 <li className="relative flex items-center p-5 bg-[#0da487] text-white font-semibold">
                   <i className="fa-regular fa-bell absolute text-[2.8125rem] top-[0.4375rem] -right-[1.0625rem] opacity-15"></i>
                   <h6 className="m-0 text-base font-bold">Notifications</h6>
@@ -93,7 +98,7 @@ const Header = () => {
               </div>
 
               {/* <!-- Profile Dropdown --> */}
-              <ul className="absolute top-[3.25rem] -right-[0.75rem] w-[18.75rem] bg-white text-[0.875rem] px-[0.625rem] py-0 rounded-[0.3125rem] shadow-[0_0_1.25rem_rgba(89,102,122,0.1)] translate-y-[1.875rem] opacity-0 invisible transition-all duration-300 ease-linear group-hover/profile:translate-y-0 group-hover/profile:opacity-1 group-hover/profile:visible z-50">
+              <ul className="absolute top-[3.25rem] -right-[0.75rem] w-[18.75rem] bg-white text-[0.875rem] px-[0.625rem] py-0 rounded-[0.3125rem] shadow-[0_0_1.25rem_rgba(89,102,122,0.1)] translate-y-[1.875rem] opacity-0 invisible transition-all duration-300 ease-linear group-hover/profile:translate-y-0 group-hover/profile:opacity-100 group-hover/profile:visible z-50">
                 <li className="p-[0.625rem] group/item">
                   <a href="javascript:void(0)" onClick={(e) => { e.preventDefault(); console.log("View profile"); }} className="flex items-center gap-[0.625rem] text-[var(--theme-color)]">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-user">
@@ -134,7 +139,16 @@ const Header = () => {
                   </a>
                 </li>
                 <li className="p-[0.625rem] group/item">
-                  <a href="/Account/Logout" id="btnLogout" className="flex items-center gap-[0.625rem] text-[var(--theme-color)]">
+                  <a
+                    href="javascript:void(0)"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      dispatch(logout());
+                      navigate('/login');
+                    }}
+                    id="btnLogout"
+                    className="flex items-center gap-[0.625rem] text-[var(--theme-color)]"
+                  >
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-log-out">
                       <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                       <polyline points="16 17 21 12 16 7"></polyline>
