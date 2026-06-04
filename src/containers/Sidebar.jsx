@@ -1,9 +1,8 @@
 import { useRef, useState, useEffect } from "react";
-import logo from "../../assets/full-white.png"
-import useSidebarEffect from '../../utils/sidebarEffect';
+import useSidebarEffect from '../utils/sidebarEffect';
 import { Link, useLocation } from "react-router-dom";
-import { path } from "../../utils/constant";
-import { FaHouse, FaStore, FaChevronRight, FaLeaf, FaKey  } from "react-icons/fa6";
+import { path } from "../utils/constant";
+import { FaHouse, FaStore, FaChevronRight, FaLeaf, FaKey, FaUsers, FaShieldHalved, FaClockRotateLeft, FaCircleUser } from "react-icons/fa6";
 
 const Sidebar = () => {
   const sidebarEffectRef = useRef(null);
@@ -51,6 +50,30 @@ const Sidebar = () => {
       icon: FaKey,
       path: `${path.ADMIN}/${path.GEMINI_KEY}`,
       isDropdown: false,
+    },
+    {
+      name: "Người dùng",
+      icon: FaUsers,
+      path: `${path.ADMIN}/${path.USERS}`,
+      isDropdown: false,
+    },
+    {
+      name: "Chức vụ",
+      icon: FaShieldHalved,
+      path: `${path.ADMIN}/${path.ROLES}`,
+      isDropdown: false,
+    },
+    {
+      name: "Nhật ký",
+      icon: FaClockRotateLeft,
+      path: `${path.ADMIN}/${path.LOGS}`,
+      isDropdown: false,
+    },
+    {
+      name: "Hồ sơ",
+      icon: FaCircleUser,
+      path: `${path.ADMIN}/${path.PROFILE}`,
+      isDropdown: false,
     }
   ];
 
@@ -80,8 +103,14 @@ const Sidebar = () => {
       <div className="flex flex-col h-full justify-between">
         <div>
           <div className="logo-wrapper relative px-[1.875rem] py-[1.6875rem] block group-[.close]/sidebar:hidden group-[.close]/sidebar:hover:block">
-            <a href="#" className="block">
-              <img src={logo} alt="Logo" className="max-w-full h-auto w-[70%]" />
+            <a href="#" className="flex items-center gap-2.5 no-underline">
+              <div className="w-9 h-9 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg flex-shrink-0">
+                <span className="text-xl leading-none">🌿</span>
+              </div>
+              <div className="flex flex-col leading-tight">
+                <span className="text-white font-extrabold text-[1.25rem] tracking-tight drop-shadow-sm" style={{ fontFamily: "'Inter', 'Segoe UI', sans-serif" }}>PlantNoteBook</span>
+                <span className="text-white/60 text-[0.6rem] font-semibold tracking-[0.15em] uppercase">Admin Panel</span>
+              </div>
             </a>
             <div className="toggle-sidebar absolute top-1/2 right-5 -translate-y-1/2 cursor-pointer flex justify-center items-center w-10 h-10">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-[1.375rem] h-[2.0625rem] text-white">
@@ -90,9 +119,11 @@ const Sidebar = () => {
             </div>
           </div>
 
-          <div className="logo-icon-wrapper text-right hidden p-3.5 group-[.close]/sidebar:block group-[.close]/sidebar:hover:hidden">
-            <a href="#">
-              <img src={logo} alt="Logo Icon" className="max-w-full h-auto" />
+          <div className="logo-icon-wrapper text-center hidden p-3.5 group-[.close]/sidebar:block group-[.close]/sidebar:hover:hidden">
+            <a href="#" className="inline-flex items-center justify-center">
+              <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center shadow-lg">
+                <span className="text-2xl leading-none">🌿</span>
+              </div>
             </a>
           </div>
 
