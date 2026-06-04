@@ -14,13 +14,11 @@ import Logs from './pages/Logs';
 import Profile from './pages/Profile';
 
 // Components của phần Quản lý cây trồng và API Key (Bốc từ nhánh tính năng qua)
-import { 
-  LibraryPlantList, 
-  LibraryPlantForm, 
+import {
+  LibraryPlantList,
+  LibraryPlantForm,
   CategoryList,
-  Product, 
-  AddProduct, 
-  GeminiKeys 
+  GeminiKeys
 } from "./containers/public";
 
 // Components
@@ -69,8 +67,6 @@ function App() {
         >
           <Route index element={<Navigate to={path.DASHBOARD} replace />} />
           <Route path={path.DASHBOARD} element={<Dashboard />} />
-<Route path={path.PRODUCT} element={<Product />} />
-          <Route path={path.PRODUCT_ADD} element={<AddProduct />} />
           <Route path={path.GEMINI_KEY} element={<GeminiKeys />} />
           <Route path={path.LIBRARY_PLANTS} element={<LibraryPlantList mode="approved" />} />
           <Route path={path.LIBRARY_PLANTS_PENDING} element={<LibraryPlantList mode="pending" />} />
