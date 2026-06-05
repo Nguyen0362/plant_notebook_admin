@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../stores/actions";
@@ -8,6 +9,23 @@ const { IoSearch, FaRegBell } = icons
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('user');
+    if (stored) {
+      try {
+        setUser(JSON.parse(stored));
+      } catch (e) {
+        // ignore
+      }
+    }
+  }, []);
+
+  const avatarLetter = user?.fullName ? user.fullName.charAt(0).toUpperCase() : 'A';
+  const displayName = user?.fullName || 'Admin User';
+  const roleName = user?.Role?.name || user?.role || 'Admin';
+
   return (
     <header className="header fixed top-0 right-0 z-50 max-w-full bg-white ml-[17.5rem] w-[calc(100%-17.5rem)] transition-all duration-500 ease-in-out [&.close]:ml-[5.3125rem] [&.close]:w-[calc(100%-5.3125rem)]">
       <div className="flex justify-between items-center px-[1.875rem] py-[1.375rem] relative">
@@ -88,12 +106,12 @@ const Header = () => {
             <li className="group/profile relative px-2 mr-0 pr-0 inline-block text-[1.125rem] cursor-pointer">
               <div className="flex items-center">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0da487] to-[#009289] flex items-center justify-center text-white font-bold text-base shadow-md select-none">
-                  A
+                  {avatarLetter}
                 </div>
                 <div className="ml-[0.9375rem]">
-                  <span className="block max-w-[120px] font-semibold text-[0.9375rem] text-[#4a5568] whitespace-nowrap overflow-hidden text-ellipsis">Admin User</span>
+                  <span className="block max-w-[120px] font-semibold text-[0.9375rem] text-[#4a5568] whitespace-nowrap overflow-hidden text-ellipsis">{displayName}</span>
                   <p className="text-[0.75rem] leading-normal text-[#4a5568]">
-                    Admin
+                    {roleName}
                     <i className="fa-solid fa-angle-down text-[0.75rem]"></i>
                   </p>
                 </div>
@@ -102,7 +120,7 @@ const Header = () => {
               {/* <!-- Profile Dropdown --> */}
               <ul className="absolute top-[3.25rem] -right-[0.75rem] w-[18.75rem] bg-white text-[0.875rem] px-[0.625rem] py-0 rounded-[0.3125rem] shadow-[0_0_1.25rem_rgba(89,102,122,0.1)] translate-y-[1.875rem] opacity-0 invisible transition-all duration-300 ease-linear group-hover/profile:translate-y-0 group-hover/profile:opacity-100 group-hover/profile:visible z-50">
                 <li className="p-[0.625rem] group/item">
-                  <a href="javascript:void(0)" onClick={(e) => { e.preventDefault(); console.log("View profile"); }} className="flex items-center gap-[0.625rem] text-[var(--theme-color)]">
+                  <a href="javascript:void(0)" onClick={(e) => { e.preventDefault(); navigate('/admin/profile'); }} className="flex items-center gap-[0.625rem] text-[var(--theme-color)]">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-user">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                       <circle cx="12" cy="7" r="4"></circle>

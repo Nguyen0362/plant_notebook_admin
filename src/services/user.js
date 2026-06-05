@@ -1,5 +1,10 @@
 import axiosInstance from '../utils/axios';
 
+// Lấy thông tin user hiện tại đang đăng nhập
+export const apiGetMe = () => {
+  return axiosInstance.get('/admin/users/me');
+};
+
 // Lấy danh sách users
 export const apiGetUsers = () => {
   return axiosInstance.get('/admin/users');
