@@ -2,30 +2,27 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import viVN from 'antd/locale/vi_VN';
 
-// Layouts
-import AdminLayout from './layouts/AdminLayout';
-
-// Pages (Cấu trúc mới chuẩn chỉnh)
-import Login from './pages/Login';
-import Dashboard from './pages/Dashboard';
-import Users from './pages/Users';
-import Roles from './pages/Roles';
-import Logs from './pages/Logs';
-import Profile from './pages/Profile';
-
-// Components của phần Quản lý cây trồng và API Key (Bốc từ nhánh tính năng qua)
+// Tất cả components giờ nằm chung trong containers
 import {
+  Layout,
+  Login,
+  Dashboard,
+  Users,
+  Roles,
+  Logs,
+  Profile,
+  GeminiKeys,
   LibraryPlantList,
   LibraryPlantForm,
   CategoryList,
-  GeminiKeys
-} from "./containers/public";
+} from './containers';
 
 // Components
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Route path constants
 import { path } from './utils/constant';
+
 function App() {
   return (
     <ConfigProvider
@@ -56,17 +53,25 @@ function App() {
         {/* Public Route - Login */}
         <Route path={path.LOGIN} element={<Login />} />
 
-        {/* Private Routes - Admin */}
+        {/* Private Routes - Layout của teammate */}
         <Route
           path={path.ADMIN}
           element={
             <ProtectedRoute>
-              <AdminLayout />
+              <Layout />
             </ProtectedRoute>
           }
         >
           <Route index element={<Navigate to={path.DASHBOARD} replace />} />
+
+          {/* Dashboard & Quản trị */}
           <Route path={path.DASHBOARD} element={<Dashboard />} />
+          <Route path={path.USERS} element={<Users />} />
+          <Route path={path.ROLES} element={<Roles />} />
+          <Route path={path.LOGS} element={<Logs />} />
+          <Route path={path.PROFILE} element={<Profile />} />
+
+          {/* Quản lý cây trồng & API Keys */}
           <Route path={path.GEMINI_KEY} element={<GeminiKeys />} />
           <Route path={path.LIBRARY_PLANTS} element={<LibraryPlantList mode="approved" />} />
           <Route path={path.LIBRARY_PLANTS_PENDING} element={<LibraryPlantList mode="pending" />} />
@@ -74,10 +79,6 @@ function App() {
           <Route path={path.LIBRARY_PLANTS_ADD} element={<LibraryPlantForm />} />
           <Route path={path.LIBRARY_PLANTS_EDIT} element={<LibraryPlantForm />} />
           <Route path={path.CATEGORIES} element={<CategoryList />} />
-          <Route path={path.USERS} element={<Users />} />
-          <Route path={path.ROLES} element={<Roles />} />
-          <Route path={path.LOGS} element={<Logs />} />
-          <Route path={path.PROFILE} element={<Profile />} />
         </Route>
 
         {/* Redirect mặc định về /admin */}

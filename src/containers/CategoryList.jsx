@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
-import { apiGetCategories, apiCreateCategory, apiUpdateCategory, apiDeleteCategory } from '../../services/categoryService';
+import { apiGetCategories, apiCreateCategory, apiUpdateCategory, apiDeleteCategory } from '../services/categoryService';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
 const CategoryList = () => {

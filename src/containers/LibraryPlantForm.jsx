@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { apiGetPlantById, apiCreatePlant, apiUpdatePlant } from '../../services/libraryPlantService';
-import { path } from '../../utils/constant';
+import { apiGetPlantById, apiCreatePlant, apiUpdatePlant } from '../services/libraryPlantService';
+import { path } from '../utils/constant';
 import Swal from 'sweetalert2';
 
 const LibraryPlantForm = () => {
@@ -340,12 +340,32 @@ const LibraryPlantForm = () => {
 
         <div>
           <label className="block text-sm font-bold text-gray-700 mb-3">Hình ảnh cây trồng {!isEdit && <span className="text-red-500">*</span>}</label>
-          <input required={!isEdit} type="file" accept="image/*" onChange={handleImageChange} className="mb-4 block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#0da487]/10 file:text-[#0da487] hover:file:bg-[#0da487]/20 transition-all cursor-pointer" />
-          {previewImage && (
-            <div className="mt-4 inline-block p-2 border border-gray-100 rounded-2xl bg-gray-50">
-              <img src={previewImage} alt="Preview" className="h-56 object-cover rounded-xl shadow-sm" />
+          
+          <div className="flex flex-col md:flex-row gap-6 items-start">
+            {/* Upload Area */}
+            <div className="flex-1 w-full">
+              <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-200 rounded-2xl cursor-pointer bg-gray-50/50 hover:bg-[#0da487]/5 hover:border-[#0da487]/40 transition-all duration-300 group/upload">
+                <div className="flex flex-col items-center justify-center py-4">
+                  <svg className="w-10 h-10 mb-2 text-gray-300 group-hover/upload:text-[#0da487] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0022.5 18.75V5.25A2.25 2.25 0 0020.25 3H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21zm16.5-13.5h.008v.008h-.008V7.5z" />
+                  </svg>
+                  <p className="text-sm font-semibold text-gray-400 group-hover/upload:text-[#0da487] transition-colors">Nhấn để chọn ảnh</p>
+                  <p className="text-xs text-gray-300 mt-1">PNG, JPG, WEBP</p>
+                </div>
+                <input required={!isEdit} type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+              </label>
             </div>
-          )}
+
+            {/* Preview Area */}
+            {previewImage && (
+              <div className="flex-shrink-0">
+                <div className="relative group/preview inline-block rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-white">
+                  <img src={previewImage} alt="Preview" className="h-40 w-auto object-cover" />
+                  <div className="absolute inset-0 bg-black/0 group-hover/preview:bg-black/10 transition-all duration-300 rounded-2xl"></div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex gap-4 pt-6 border-t border-gray-150 mt-8">

@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { logout } from "../../stores/actions";
-import icons from "../../utils/icons";
+import { logout } from "../stores/actions";
+import icons from "../utils/icons";
 
 const { IoSearch, FaRegBell } = icons
 
@@ -20,7 +20,7 @@ const Header = () => {
                 name="name"
                 defaultValue=""
                 className="w-full bg-[#f9f9f6] border border-[#f9f9f6] rounded-[0.5rem] py-2 pl-[1.875rem] pr-[4.375rem] text-[calc(0.875rem+2*((100vw-20rem)/(1920-320)))] leading-8 focus:outline-none focus:ring-0 focus:border-[#f9f9f6]"
-                placeholder="Search Fastkart .."
+                placeholder="Tìm kiếm PlantNoteBook ..."
               />
               <button className="absolute top-0 right-0 bg-[rgb(255,165,59)] text-white border-none rounded-r-[0.5rem] rounded-l-0 px-[1.125rem] py-4 text-[1.125rem]">
                 <IoSearch />
@@ -87,7 +87,9 @@ const Header = () => {
             {/* // <!-- Profile Box --> */}
             <li className="group/profile relative px-2 mr-0 pr-0 inline-block text-[1.125rem] cursor-pointer">
               <div className="flex items-center">
-                <img src="/images/users/default-avatar.png" alt="Profile" className="w-10 h-10 rounded-full m-0 object-cover" />
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0da487] to-[#009289] flex items-center justify-center text-white font-bold text-base shadow-md select-none">
+                  A
+                </div>
                 <div className="ml-[0.9375rem]">
                   <span className="block max-w-[120px] font-semibold text-[0.9375rem] text-[#4a5568] whitespace-nowrap overflow-hidden text-ellipsis">Admin User</span>
                   <p className="text-[0.75rem] leading-normal text-[#4a5568]">
