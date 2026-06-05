@@ -9,6 +9,7 @@ import {
   KeyOutlined
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import { apiGetMe } from '../services/user';
 
 const { Title, Text } = Typography;
 
@@ -17,7 +18,7 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Lấy thông tin user từ localStorage (đã lưu khi login)
+    // 1. Lấy thông tin user từ localStorage trước để hiển thị nhanh (nếu có)
     const stored = localStorage.getItem('user');
     if (stored) {
       try {
@@ -26,7 +27,24 @@ const Profile = () => {
         setUser(null);
       }
     }
-    setLoading(false);
+
+    // 2. Fetch thông tin mới nhất từ backend để đồng bộ
+    const fetchUser = async () => {
+      try {
+        const response = await apiGetMe();
+        if (response?.data?.err === 0) {
+          const fetchedUser = response.data.data;
+          setUser(fetchedUser);
+          localStorage.setItem('user', JSON.stringify(fetchedUser));
+        }
+      } catch (error) {
+        console.error("Failed to fetch profile from server", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
   }, []);
 
   if (loading) {

@@ -5,6 +5,10 @@ export const login = (payload) => async (dispatch) => {
   try {
     const response = await apiLogin(payload)
     if (response?.data.err === 0) {
+      const user = response.data.data?.user || response.data.user;
+      if (user) {
+        localStorage.setItem('user', JSON.stringify(user));
+      }
       dispatch({
         type: actionTypes.LOGIN_SUCCESS,
         data: response.data.data?.token || response.data.token
@@ -23,6 +27,9 @@ export const login = (payload) => async (dispatch) => {
   }
 }
 
-export const logout = () => ({
-  type: actionTypes.LOGOUT
-})
+export const logout = () => {
+  localStorage.removeItem('user');
+  return {
+    type: actionTypes.LOGOUT
+  }
+}
