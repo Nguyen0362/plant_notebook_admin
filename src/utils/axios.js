@@ -2,16 +2,24 @@ import axios from 'axios';
 import { message } from 'antd';
 
 const instance = axios.create({
-  baseURL: import.meta.env.VITE_SERVER_URL || 'http://localhost:3000',
+  baseURL: import.meta.env.VITE_SERVER_URL || 'http://localhost:5000',
 });
 
 // ===== Request Interceptor =====
 // Tự động đính kèm Token vào header Authorization cho mọi request
 instance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    const persistAuth = localStorage.getItem('persist:auth');
+    if (persistAuth) {
+      try {
+        const authData = JSON.parse(persistAuth);
+        const token = authData.token ? JSON.parse(authData.token) : null;
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+      } catch (error) {
+        console.error("Failed to parse persist:auth token", error);
+      }
     }
     return config;
   },
@@ -42,8 +50,8 @@ instance.interceptors.response.use(
       // Nếu mã 401 → Token hết hạn / không hợp lệ → Tự động logout
       if (status === 401) {
         message.error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!');
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        // Xóa auth khỏi redux persist
+        localStorage.removeItem('persist:auth');
 
         // Redirect về trang Login
         window.location.href = '/login';

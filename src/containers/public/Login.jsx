@@ -70,9 +70,9 @@ const Login = () => {
 
   return (
     <div className="w-screen h-screen flex items-center justify-center bg-[#0d1612] relative overflow-hidden">
-      {/* Dynamic Background Gradients */}
-      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-[#1b7a3d] opacity-20 blur-[100px] animate-pulse" style={{ animationDuration: '8s' }}></div>
-      <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[#0da487] opacity-25 blur-[100px] animate-pulse" style={{ animationDuration: '10s' }}></div>
+      {/* Dynamic Background Gradients - Removed animate-pulse to fix UI lag */}
+      <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-[#1b7a3d] opacity-20 blur-[100px]"></div>
+      <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[#0da487] opacity-25 blur-[100px]"></div>
 
       {/* Floating Leaves or Organic Shapes (decorative) */}
       <div className="absolute top-1/4 left-1/5 w-12 h-12 bg-emerald-500/10 rounded-br-full transform rotate-45 blur-sm"></div>
