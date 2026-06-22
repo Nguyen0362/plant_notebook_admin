@@ -50,8 +50,9 @@ instance.interceptors.response.use(
       // Nếu mã 401 → Token hết hạn / không hợp lệ → Tự động logout
       if (status === 401) {
         message.error('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại!');
-        // Xóa auth khỏi redux persist
+        // Xóa auth khỏi redux persist và thông tin user
         localStorage.removeItem('persist:auth');
+        localStorage.removeItem('user');
 
         // Redirect về trang Login
         window.location.href = '/login';

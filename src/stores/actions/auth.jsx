@@ -22,7 +22,7 @@ export const login = (payload) => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: actionTypes.LOGIN_FAIL,
-      data: null
+      data: error.response?.data?.msg || error.message || "Lỗi kết nối server!"
     })
   }
 }
